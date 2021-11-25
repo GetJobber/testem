@@ -64,7 +64,7 @@ function decycle(object, maxDepth) {
     if (value === null || typeof value === 'undefined' || value instanceof Boolean || value instanceof Number) {
       return value;
     }
-    if (typeof value === 'object' && typeof value.nodeType === 'number') {
+    if (typeof value === 'object' && typeof value?.nodeType === 'number') {
       return String(value);
     }
 
@@ -102,8 +102,14 @@ function decycle(object, maxDepth) {
         nu = {};
         for (name in value) {
           if (Object.prototype.hasOwnProperty.call(value, name)) {
-            nu[name] = derez(value[name],
-              path + '[' + JSON.stringify(name) + ']', depth + 1);
+            let valueForName = "";
+            try {
+              valueForName = derez(value[name],
+                path + '[' + JSON.stringify(name) + ']', depth + 1);
+            } catch {
+              valueForName = "Could not derez, using placeholder string";
+            }
+            nu[name] = valueForName;
           }
         }
       }
